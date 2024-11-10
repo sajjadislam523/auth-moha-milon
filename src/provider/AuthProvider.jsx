@@ -5,25 +5,28 @@ import {
     createUserWithEmailAndPassword,
     onAuthStateChanged,
     signInWithEmailAndPassword,
+    signOut,
 } from "firebase/auth";
 
 export const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
-    const name = "nodir buk e jol";
-
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const createUser = (email, password) => {
+        setLoading(true);
         return createUserWithEmailAndPassword(auth, email, password);
     };
 
     const signInUser = (email, password) => {
+        setLoading(true);
         return signInWithEmailAndPassword(auth, email, password);
     };
 
     const signOutUser = () => {
-        auth.signOut(auth);
+        setLoading(true);
+        return signOut(auth);
     };
 
     useEffect(() => {
@@ -31,6 +34,7 @@ const AuthProvider = ({ children }) => {
             if (currentUser) {
                 console.log("Currently logged in", currentUser);
                 setUser(currentUser);
+                setLoading(false);
             }
             return () => {
                 unSubscribe();
@@ -39,8 +43,8 @@ const AuthProvider = ({ children }) => {
     }, []);
 
     const authInfo = {
-        name,
         user,
+        loading,
         createUser,
         signInUser,
         signOutUser,
