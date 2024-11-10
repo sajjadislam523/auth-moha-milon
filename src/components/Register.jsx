@@ -1,12 +1,24 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../provider/AuthProvider";
 
 const Register = () => {
+    const { createUser } = useContext(AuthContext);
+
     const handleSignUp = (e) => {
         e.preventDefault();
         const name = e.target.name.value;
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log(name, email, password);
+
+        createUser(email, password)
+            .then((res) => {
+                console.log(res.user);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
     return (
         <div className="flex flex-col items-center justify-center gap-6 mt-4">

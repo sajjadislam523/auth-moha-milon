@@ -2,6 +2,8 @@
 
 ## Authentication using react and react-router with context API
 
+## Instruction about configuring firebase authentication in React app.
+
 ## Steps
 
 1. **Install Firebase**

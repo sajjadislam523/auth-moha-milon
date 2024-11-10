@@ -1,11 +1,49 @@
-import { createContext } from "react";
-import PropTypes from "propTypes";
+import { createContext, useEffect, useState } from "react";
+import { PropTypes } from "prop-types";
+import auth from "../firebase/firebase.conf";
+import {
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+} from "firebase/auth";
 
 export const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
+    const name = "nodir buk e jol";
+
+    const [user, setUser] = useState(null);
+
+    const createUser = (email, password) => {
+        return createUserWithEmailAndPassword(auth, email, password);
+    };
+
+    const signInUser = (email, password) => {
+        return signInWithEmailAndPassword(auth, email, password);
+    };
+
+    const signOutUser = () => {
+        auth.signOut(auth);
+    };
+
+    useEffect(() => {
+        const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                console.log("Currently logged in", currentUser);
+                setUser(currentUser);
+            }
+            return () => {
+                unSubscribe();
+            };
+        });
+    }, []);
+
     const authInfo = {
-        name: "Nodir buk e jol",
+        name,
+        user,
+        createUser,
+        signInUser,
+        signOutUser,
     };
 
     return (
@@ -13,11 +51,11 @@ const AuthProvider = ({ children }) => {
     );
 };
 
+export default AuthProvider;
+
 AuthProvider.propTypes = {
     children: PropTypes.object.isRequired,
 };
-export default AuthProvider;
-
 /***
  * 1. Create context with null value
  * 2. Create provider

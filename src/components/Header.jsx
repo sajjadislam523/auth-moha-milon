@@ -1,10 +1,20 @@
 import { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
 
 const Header = () => {
-    const authInfo = useContext(AuthContext);
-    console.log(authInfo);
+    const { user, signOutUser } = useContext(AuthContext);
+    console.log(user);
+
+    const handleSignOut = () => {
+        signOutUser()
+            .then(() => {
+                console.log("User signed out successfully");
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
+    };
 
     const links = (
         <div className="flex items-center gap-4">
@@ -50,7 +60,19 @@ const Header = () => {
                 <ul className="px-1 menu menu-horizontal">{links}</ul>
             </div>
             <div className="navbar-end">
-                <a className="btn">Button</a>
+                {user ? (
+                    <div className="space-x-4">
+                        <span>{user.email}</span>
+                        <button
+                            className="btn btn-ghost"
+                            onClick={handleSignOut}
+                        >
+                            Logout
+                        </button>
+                    </div>
+                ) : (
+                    <Link to="/login">Login</Link>
+                )}
             </div>
         </div>
     );
